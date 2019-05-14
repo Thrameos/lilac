@@ -1,0 +1,53 @@
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.exe
+
+# Temporary and log files
+*.lock
+*.log
+*.tmp
+*.ser
+
+# Matlab files
+*.mat
+
+# Data files
+*.thirft.gz
+*.open.gz
+*.dat.gz
+*.open
+*.asc
+*.dat
+*.db
+*.pcc
+*.pcf
+*.spe
+
+*.DS_Store
+*Thumbs.db
+~*
+*~
+*.[oa]
+*.pyc
+*.class 
+*.dll
+*.so
+*.dylib
+
+#build files
+/build/
+/dist/
+/dependency/*.jar
+
+# IDE files
+hs_err_pid*.
+/nbproject/private/
+/nbproject/genfiles.properties
+*.prj
+.ant-targets-build.xml

@@ -1,202 +1,114 @@
-<project name="jasm" default="build" xmlns:ivy="antlib:org.apache.ivy.ant">
-    <!-- some variables used -->
-    <property name="lib.dir" value="lib" />
-	<property name="test.lib.dir" value="lib-test" />
-    <property name="build.dir" value="classes" />
-	<property name="test.build.dir" value="classes-test" />
-    <property name="src.dir" value="src" />
-	<property name="src.gen.dir" value="src-gen" />
-	<property name="test.src.dir" value="src-test" />
-	<property name="report.dir" value="report" />
-	<property name="test.report.dir" value="report-test" />
-	<property name="target.dir" value="target" />
-	<property name="dest.dir.relative" value="target/dist" />
-	<property name="dest.dir" location="${dest.dir.relative}" />
-	<property name="jasm.version" value="1.1.1" />
-    
-    <!-- paths used for compilation  -->
-    <path id="lib.path.id">
-        <fileset dir="${dest.dir}/lib" />
-	</path>
-    
-	<path id="dev.lib.path.id">
-	        <fileset dir="${lib.dir}" />
-		</path>
-	
-	<path id="test.lib.path.id">
-	        <fileset dir="${dest.dir}/lib" />
-			<pathelement path="${build.dir}"/>
-			<pathelement path="${test.build.dir}"/>
-	</path>
-    
-	<target name="clean-libs-devs"  description="deletes dependencies for development">
-    	<mkdir dir="${lib.dir}" />
-    	<mkdir dir="${report.dir}" />
-        <ivy:retrieve conf="build"/>
-    	<ivy:report todir="${report.dir}" />
-    </target>
-	
-    <target name="retrieve-dev"  description="retrieves dependencies for development">
-    	<mkdir dir="${lib.dir}" />
-    	<mkdir dir="${report.dir}" />
-        <ivy:retrieve pattern="${lib.dir}/[artifact]-[type].[ext]" conf="dev"/>
-    	<ivy:report todir="${report.dir}" />
-    </target> 
-	
-	<target name="retrieve"  description="retrieves dependencies for development">
-	    <mkdir dir="${dest.dir}/lib" />
-	    <ivy:retrieve pattern="${dest.dir}/lib/[artifact].[ext]" conf="build"/>
-	</target> 
-	
-	<target name="clean-grammar" depends="retrieve">
-		 <delete dir ="${src.gen.dir}/org"/>
-	</target>
-	
-	<target name="generate-grammar" depends="retrieve">
-		<mkdir dir="${src.gen.dir}"/>
-		<java classname="org.antlr.v4.Tool" classpathref="lib.path.id">
-			<arg value="-lib"/>
-			<arg value="grammar"/>
-			<arg value="-o"/>
-			<arg value="${src.gen.dir}/org/jasm/parser"/>
-			<arg value="-package"/>
-			<arg value="org.jasm.parser"/>
-			<arg value="-listener"/>
-			<arg value="-visitor"/>
-			<arg value="${basedir}/grammar/JavaAssembler.g4"/>
-        </java>
-	</target>
-	
-	<target name="generate-grammar-dev" depends="clean-grammar">
-			<mkdir dir="${src.gen.dir}"/>
-			<java classname="org.antlr.v4.Tool" classpathref="dev.lib.path.id">
-				<arg value="-lib"/>
-				<arg value="grammar"/>
-				<arg value="-o"/>
-				<arg value="${src.gen.dir}/org/jasm/parser"/>
-				<arg value="-package"/>
-				<arg value="org.jasm.parser"/>
-				<arg value="-listener"/>
-				<arg value="-visitor"/>
-				<arg value="${basedir}/grammar/JavaAssembler.g4"/>
-	        </java>
-		</target>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="lilac" default="default" basedir=".">
+    <description>Builds, tests, and runs the project lilac.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <!--
 
-    
-	<target name="test" unless="skipTests">
-		<!-- Compile tests -->
-			<javac srcdir="${test.src.dir}" encoding="UTF-8" debug="on" debuglevel="lines,source" destdir="${test.build.dir}" classpathref="test.lib.path.id" includeAntRuntime="false"/>
-			<copy todir="${test.build.dir}">
-				<fileset dir="${test.src.dir}">
-					<include name="**/*.properties"/>
-					<include name="**/*.xml"/>
-					<include name="**/*.txt"/>
-					<include name="**/*.jasm"/>
-				</fileset>
-			</copy>
-			<!-- Junit tests -->
-			<junit printsummary="yes" haltonfailure="true">
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
 
-				<classpath id="classpath" refid="test.lib.path.id"/>
-				
-				<formatter type="plain"/>
-				<formatter type="xml"/>
-				
-				<batchtest fork="false" todir="${test.report.dir}">
-					<fileset dir="${test.src.dir}">
-					  <include name="**/*Test.java"/>
-	  
-					</fileset>
-				 </batchtest>
-			</junit>
-		
-	</target>
-	
-    <target name="build" depends="generate-grammar" description="build the project">
-    	<!-- create dirs -->
-        <mkdir dir="${build.dir}" />
-    	<mkdir dir="${test.build.dir}" />
-    	<mkdir dir="${dest.dir}" />
-    	<mkdir dir="${report.dir}" />
-    	<mkdir dir="${test.report.dir}" />
-    	<!-- Compile src-gen -->
-    	<javac encoding="UTF-8" srcdir="${src.gen.dir}" debug="on" debuglevel="lines,source" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false"/>
-    	<copy todir="${build.dir}">
-    	    <fileset dir="${src.gen.dir}">
-    	    	<include name="**/*.properties"/>
-    	    	<include name="**/*.xml"/>
-    	    	<include name="**/*.tokens"/>
-    	    </fileset>
-    	</copy>
-    	<!-- Compile -->
-        <javac srcdir="${src.dir}" debug="on" debuglevel="lines,source" destdir="${build.dir}" classpathref="lib.path.id" includeAntRuntime="false" encoding="UTF-8"/>
-    	<copy todir="${build.dir}">
-    	    <fileset dir="${src.dir}">
-    	    	<include name="**/*.properties"/>
-    	    	<include name="**/*.xml"/>
-				<include name="**/*.conf"/>
-    	    </fileset>
-    	</copy>
-		
-		<antcall target="test"/>
-			
-    	<!--Build Jar -->
-    	<pathconvert property="jar.class.path" dirsep="/" pathsep=" " refid="lib.path.id">
-    	    
-    		<map from="${dest.dir}/lib" to="lib" />
-    	</pathconvert>
-    	
-    	
-    	
-    	<jar destfile="${dest.dir}/jasm.jar"
-    	     basedir="${build.dir}">
-    		<manifest>
-    			<attribute name="Main-Class"  value="org.jasm.main.Main"/>
-    			<attribute name="Class-Path" value="${jar.class.path}" />
-    		</manifest>
-    	</jar>
-    	
-    	<!-- Copy the rest -->
-    	<copy todir="${dest.dir}">
-    	    <fileset dir="scripts"/>
-    	</copy>
-		<copy file="src/org/jasm/environment/default.conf" tofile="${dest.dir}/conf/jasm.conf"/>
-		<mkdir dir="${dest.dir}/docs"/>
-    	<copy todir="${dest.dir}/docs">
-    	    <fileset dir="docs">
-				<exclude name="reference/**"/>
-			</fileset>
-    	</copy>
-    	
-    	
-    	<!-- Create zip-File for Win -->
-    	<zip destfile="${target.dir}/jasm-${jasm.version}.zip">
-    		<zipfileset dir="${dest.dir}" prefix="jasm"/>
-    	</zip>
-    	
-    	<!-- Create tar-File for Unix/Linux -->
-    	<tar destfile="${target.dir}/jasm-${jasm.version}.tar.gz" compression="gzip">
-    	  <tarfileset dir="${dest.dir}" prefix="jasm" dirmode="755" filemode="644">
-    	  	 <exclude name="**/jasm.sh"/> 
-    	  </tarfileset>
-    	  <tarfileset dir="${dest.dir}" prefix="jasm" dirmode="755" filemode="755">
-	    	  	<include name="**/jasm.sh"/> 
-	      </tarfileset>
-    	</tar>
-    	
-    </target>
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
 
-  
-    <target name="clean" description="clean the project" depends="clean-grammar">
-    	<delete dir="${build.dir}"/>
-    	<delete dir="${test.build.dir}"/>
-    	<delete dir="${report.dir}"/>
-    	<delete dir="${test.report.dir}"/>
-    	<delete dir="${target.dir}"/>
-    </target>
-	
-    
-	<target name="clean-cache" description="clean the ivy cache">
-		<ivy:cleancache />
-	</target>
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar:                  JAR building
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="lilac-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+  -->
+  <!-- paths used for compilation  -->
+  <path id="lib.path.id">
+    <fileset dir="dependency" />
+  </path>
+
+  <property file="nbproject/project.properties"/>
+
+  <target name="dependency">
+    <property environment="env" />
+    <path id="classpath">
+      <fileset dir="${env.M2_HOME}/boot">
+        <include name="plexus-classworlds-*.jar" />
+      </fileset>
+    </path>
+
+    <property name="mvn.mainclass" value="org.codehaus.plexus.classworlds.launcher.Launcher" />
+    <java classname="${mvn.mainclass}" classpathref="classpath" dir="dependency" fork="true" failonerror="true">
+      <jvmarg value="-Dclassworlds.conf=${env.M2_HOME}/bin/m2.conf" />
+      <jvmarg value="-Dmaven.home=${env.M2_HOME}" />
+      <arg value="compile" />
+    </java>
+  </target>
+
+  <target name="generate-grammar" depends="dependency">
+    <mkdir dir="${build.generated.sources.dir}"/>
+    <java classname="org.antlr.v4.Tool" classpathref="lib.path.id">
+      <arg value="-lib"/>
+      <arg value="grammar"/>
+      <arg value="-o"/>
+      <arg value="${build.generated.sources.dir}/src/org/jasm/parser"/>
+      <arg value="-package"/>
+      <arg value="org.jasm.parser"/>
+      <arg value="-listener"/>
+      <arg value="-visitor"/>
+      <arg value="${basedir}/grammar/JavaAssembler.g4"/>
+    </java>
+  </target>
+
+  <target name="-pre-compile" depends="dependency,generate-grammar"/>
+
+
 </project>

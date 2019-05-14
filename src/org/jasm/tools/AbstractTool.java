@@ -2,7 +2,6 @@ package org.jasm.tools;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -27,7 +26,6 @@ import org.jasm.resolver.DirClasspathEntry;
 import org.jasm.resolver.IClassPathEntry;
 import org.jasm.resolver.JarFileClassPathEntry;
 import org.jasm.resolver.ZipFileClassPathEntry;
-import org.jasm.tools.print.ConsolePrinter;
 import org.jasm.tools.print.IPrinter;
 import org.jasm.tools.resource.CompositeResourceCollection;
 import org.jasm.tools.resource.DirResourceCollection;
