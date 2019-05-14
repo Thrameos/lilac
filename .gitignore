@@ -43,6 +43,7 @@
 #build files
 /build/
 /dist/
+/work/
 /dependency/*.jar
 
 # IDE files
