@@ -7,14 +7,12 @@ import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.List;
 
 import junit.framework.Assert;
 
 import org.apache.commons.io.IOUtils;
 import org.jasm.bytebuffer.ByteArrayByteBuffer;
-import org.jasm.bytebuffer.print.PrettyPrinter;
 import org.jasm.item.clazz.Clazz;
 import org.jasm.parser.AssemblerParser;
 import org.jasm.resolver.ClassInfoResolver;
